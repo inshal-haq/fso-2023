@@ -2,7 +2,7 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: POST user input to https://studies.cs.helsinki.fi/exampleapp/new_note
+    browser->>server: POST note: user-input to https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
     server-->>browser: URL Redirect to /notes (Status 302)
     deactivate server

@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -26,3 +27,4 @@ sequenceDiagram
 
     Note right of browser: The browser executes the callback function that renders the notes
     Note right of browser: SPA App loads same as traditional app but adds event handler for form submit
+```

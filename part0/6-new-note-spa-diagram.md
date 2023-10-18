@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -10,3 +11,4 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: User calls post api when Save button clicked
+```

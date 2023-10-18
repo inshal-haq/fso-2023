@@ -7,7 +7,7 @@ sequenceDiagram
     server-->>browser: URL Redirect to /notes (Status 302)
     deactivate server
 
-    Note right of browser: User input calls post api when user clicks Save button
+    Note right of browser: User calls post api when Save button clicked
 
     browser->>server: (reload page) GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server

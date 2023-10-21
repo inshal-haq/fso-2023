@@ -19,6 +19,7 @@ const App = () => {
   ]
   
   const length = anecdotes.length
+  let indexWithMax = 0;
 
   const [selected, setSelected] = useState(0)
   const [voteArray, setVoteArray] = useState(new Uint8Array(length))
@@ -33,12 +34,28 @@ const App = () => {
     setSelected(Math.floor(Math.random() * length))
   }
 
+  const getMostVotedAnecdote = () => {
+    let max = 0;
+    for (let i = 0; i < length; i++) {
+      if (voteArray[i] > max) {
+        max = voteArray[i];
+        indexWithMax = i;
+      }
+    }
+
+    return indexWithMax;
+  }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <div>has {voteArray[selected]} votes</div>
       <Button text='vote' handleClick={handleVoteClick} />
       <Button text='next anecdote' handleClick={handleAnecdoteClick} />
+
+      <h1>Anecdote with most votes</h1>
+      <div>{anecdotes[getMostVotedAnecdote()]}</div>
     </div>
   )
 }

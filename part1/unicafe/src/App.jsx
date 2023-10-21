@@ -17,15 +17,19 @@ const Statistics = ({ good, neutral, bad }) => {
   return (
     <div>
       <h1>statistics</h1>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {total}</div>
-      <div>average {average}</div>
-      <div>positive {positive}%</div>
+      <StatisticsLine text='good' value={good} />
+      <StatisticsLine text='neutral' value={neutral} />
+      <StatisticsLine text='bad' value={bad} />
+      <StatisticsLine text='all' value={total} />
+      <StatisticsLine text='average' value={average} />
+      <StatisticsLine text='positive' value={positive + '%'} />
     </div>
   )
 }
+
+const StatisticsLine = ({ text, value }) => (
+  <div>{text} {value}</div>
+)
 
 const Button = ({ text, handleClick }) => (
   <button onClick={handleClick}>

@@ -1,19 +1,23 @@
 import { useState } from 'react'
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+const Persons = ({ filteredPersons }) => (
+  <div>
+    {filteredPersons.map(person => 
+      <div key={person.id}>{person.name} {person.number}</div> 
+    )}
+  </div>
+)
+
+const Filter = ({ nameFilter, setNameFilter }) => (
+  <div>
+    filter shown with
+    <input value={nameFilter} onChange={e => setNameFilter(e.target.value)} />
+  </div>
+)
+
+const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [nameFilter, setNameFilter] = useState('')
-
-  const filteredPersons = persons.filter(person => 
-    person.name.toLowerCase().includes(nameFilter.toLowerCase())
-  )
 
   const addNewPerson = (event) => {
     event.preventDefault()
@@ -27,40 +31,52 @@ const App = () => {
 
     const newPersonObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.length + 1
     }
     setPersons(persons.concat(newPersonObject))
     setNewName('')
     setNewNumber('')
   }
+  
+  return (
+    <form onSubmit={addNewPerson}>
+      <div>
+        name: <input value={newName} onChange={e => setNewName(e.target.value)} />
+      </div>
+      <div>
+        number: <input value={newNumber} onChange={e => setNewNumber(e.target.value)} />
+      </div>
+      <div>
+        <button type='submit'>add</button>
+      </div>
+    </form>
+  )
+}
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ])
+  const [nameFilter, setNameFilter] = useState('')
+
+  const filteredPersons = persons.filter(person => 
+    person.name.toLowerCase().includes(nameFilter.toLowerCase())
+  )
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with
-        <input value={nameFilter} onChange={e => setNameFilter(e.target.value)} />
-      </div>
+      <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
 
       <h2>add a new</h2>
-      <form onSubmit={addNewPerson}>
-        <div>
-          name: <input value={newName} onChange={e => setNewName(e.target.value)} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={e => setNewNumber(e.target.value)} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <PersonForm persons={persons} setPersons={setPersons} />
 
       <h2>Numbers</h2>
-      <div>
-        {filteredPersons.map(person => 
-          <div key={person.id}>{person.name} {person.number}</div> 
-        )}
-      </div>
+      <Persons filteredPersons={filteredPersons} />
     </div>
   )
 }

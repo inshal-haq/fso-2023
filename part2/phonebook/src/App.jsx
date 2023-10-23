@@ -27,8 +27,17 @@ const PersonForm = ({ persons, setPersons }) => {
     event.preventDefault()
 
     for (const person of persons) {
-      if (person.name === newName) {
-        alert(`${newName} already added to phonebook`)
+      if (person.name.toLowerCase() === newName.toLowerCase()) {
+        if (confirm(`${person.name} already added to phonebook, replace the old number with the new one?`)) {
+          const updatedPerson = {...person, number: newNumber}
+          
+          phonebookServices.update(person.id, updatedPerson).then(returnedPerson => {
+            setPersons(persons.map(p => (p.id !== person.id) ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+        }
+
         return
       }
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebookServices from './services/phonebook'
 
 const Persons = ({ filteredPersons }) => (
   <div>
@@ -36,8 +36,8 @@ const PersonForm = ({ persons, setPersons }) => {
       id: persons.length + 1
     }
 
-    axios.post('http://localhost:3001/persons', newPersonObject).then(response => {
-      setPersons(persons.concat(response.data))
+    phonebookServices.create(newPersonObject).then(newPerson => {
+      setPersons(persons.concat(newPerson))
       setNewName('')
       setNewNumber('')
     })
@@ -63,11 +63,9 @@ const App = () => {
   const [nameFilter, setNameFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    phonebookServices.getAll().then(initialPersons => {
+      setPersons(initialPersons)
+    })
   }, [])
 
   const filteredPersons = persons.filter(person => 

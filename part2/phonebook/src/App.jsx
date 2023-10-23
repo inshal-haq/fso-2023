@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import phonebookServices from './services/phonebook'
 
-const Persons = ({ filteredPersons }) => (
+const Persons = ({ filteredPersons, deletePerson }) => (
   <div>
     {filteredPersons.map(person => 
-      <div key={person.id}>{person.name} {person.number}</div> 
+      <div key={person.id}>
+        {person.name} {person.number}
+        <button onClick={() => deletePerson(person.id)}>delete</button>
+      </div>
     )}
   </div>
 )
@@ -72,6 +75,15 @@ const App = () => {
     person.name.toLowerCase().includes(nameFilter.toLowerCase())
   )
 
+  const deletePerson = id => {
+    const deletedPerson = persons.find(person => person.id === id)
+    if (confirm(`Delete ${deletedPerson.name}?`)) {
+      const newPersons = persons.filter(person => person !== deletedPerson)
+      phonebookServices.remove(id)
+      setPersons(newPersons)
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -81,7 +93,7 @@ const App = () => {
       <PersonForm persons={persons} setPersons={setPersons} />
 
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   )
 }

@@ -11,4 +11,8 @@ const create = contact => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create }
+const remove = id => {
+  return axios.delete(`${url}/${id}`)
+}
+
+export default { getAll, create, remove }

@@ -11,24 +11,9 @@
       "id": 2
     },
     {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "testing this ",
-      "number": "9720421593",
-      "id": 5
-    },
-    {
-      "name": "Monkey Man",
-      "number": "928133829",
-      "id": 6
+      "id": 3
     }
   ]
 }

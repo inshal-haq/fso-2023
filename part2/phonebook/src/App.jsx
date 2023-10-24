@@ -1,6 +1,26 @@
 import { useState, useEffect } from 'react'
 import phonebookServices from './services/phonebook'
 
+const Notification = ({ message }) => {
+  if (message === null) return null
+  
+  const successStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  return (
+    <div style={successStyle}>
+      {message}
+    </div>
+  )
+}
+
 const Persons = ({ filteredPersons, deletePerson }) => (
   <div>
     {filteredPersons.map(person => 
@@ -19,9 +39,26 @@ const Filter = ({ nameFilter, setNameFilter }) => (
   </div>
 )
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ newName, setNewName, newNumber, setNewNumber, addNewPerson }) => (
+  <form onSubmit={addNewPerson}>
+    <div>
+      name: <input value={newName} onChange={e => setNewName(e.target.value)} />
+    </div>
+    <div>
+      number: <input value={newNumber} onChange={e => setNewNumber(e.target.value)} />
+    </div>
+    <div>
+      <button type='submit'>add</button>
+    </div>
+  </form>
+)
+
+const App = () => {
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const addNewPerson = (event) => {
     event.preventDefault()
@@ -33,6 +70,8 @@ const PersonForm = ({ persons, setPersons }) => {
           
           phonebookServices.update(person.id, updatedPerson).then(returnedPerson => {
             setPersons(persons.map(p => (p.id !== person.id) ? p : returnedPerson))
+            setSuccessMessage(`Changed number for ${returnedPerson.name}`)
+            setTimeout(() => {setSuccessMessage(null)}, 3000)
             setNewName('')
             setNewNumber('')
           })
@@ -48,31 +87,14 @@ const PersonForm = ({ persons, setPersons }) => {
       id: persons.length + 1
     }
 
-    phonebookServices.create(newPersonObject).then(newPerson => {
-      setPersons(persons.concat(newPerson))
+    phonebookServices.create(newPersonObject).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
+      setSuccessMessage(`Added ${returnedPerson.name}`)
+      setTimeout(() => {setSuccessMessage(null)}, 3000)
       setNewName('')
       setNewNumber('')
     })
   }
-  
-  return (
-    <form onSubmit={addNewPerson}>
-      <div>
-        name: <input value={newName} onChange={e => setNewName(e.target.value)} />
-      </div>
-      <div>
-        number: <input value={newNumber} onChange={e => setNewNumber(e.target.value)} />
-      </div>
-      <div>
-        <button type='submit'>add</button>
-      </div>
-    </form>
-  )
-}
-
-const App = () => {
-  const [persons, setPersons] = useState([])
-  const [nameFilter, setNameFilter] = useState('')
 
   useEffect(() => {
     phonebookServices.getAll().then(initialPersons => {
@@ -96,10 +118,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
 
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm 
+        newName={newName} 
+        setNewName={setNewName} 
+        newNumber={newNumber} 
+        setNewNumber={setNewNumber}
+        addNewPerson={addNewPerson}
+      />
 
       <h2>Numbers</h2>
       <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import phonebookServices from './services/phonebook'
 
-const Notification = ({ message }) => {
+const Notification = ({ message, isError }) => {
   if (message === null) return null
   
   const successStyle = {
@@ -14,8 +14,18 @@ const Notification = ({ message }) => {
     marginBottom: 10
   }
 
+  const errorStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
   return (
-    <div style={successStyle}>
+    <div style={(isError) ? errorStyle : successStyle}>
       {message}
     </div>
   )
@@ -58,7 +68,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   const addNewPerson = (event) => {
     event.preventDefault()
@@ -70,11 +81,21 @@ const App = () => {
           
           phonebookServices.update(person.id, updatedPerson).then(returnedPerson => {
             setPersons(persons.map(p => (p.id !== person.id) ? p : returnedPerson))
-            setSuccessMessage(`Changed number for ${returnedPerson.name}`)
-            setTimeout(() => {setSuccessMessage(null)}, 3000)
             setNewName('')
             setNewNumber('')
+
+            setIsError(false)
+            setMessage(`Changed number for ${returnedPerson.name}`)
+            setTimeout(() => {setMessage(null)}, 3000)
           })
+            .catch(error => {
+              setIsError(true)
+              setMessage(`${person.name} has already been deleted from server`)
+              setTimeout(() => {setMessage(null)}, 3000)
+              phonebookServices.getAll().then(initialPersons => {
+                setPersons(initialPersons)
+              })
+            })
         }
 
         return
@@ -89,10 +110,12 @@ const App = () => {
 
     phonebookServices.create(newPersonObject).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson))
-      setSuccessMessage(`Added ${returnedPerson.name}`)
-      setTimeout(() => {setSuccessMessage(null)}, 3000)
       setNewName('')
       setNewNumber('')
+
+      setIsError(false)
+      setMessage(`Added ${returnedPerson.name}`)
+      setTimeout(() => {setMessage(null)}, 3000)
     })
   }
 
@@ -111,6 +134,14 @@ const App = () => {
     if (confirm(`Delete ${deletedPerson.name}?`)) {
       const newPersons = persons.filter(person => person !== deletedPerson)
       phonebookServices.remove(id)
+        .catch(error => {
+          setIsError(true)
+          setMessage(`${deletedPerson.name} has already been deleted from server`)
+          setTimeout(() => {setMessage(null)}, 3000)
+          phonebookServices.getAll().then(initialPersons => {
+            setPersons(initialPersons)
+          })
+        })
       setPersons(newPersons)
     }
   }
@@ -118,7 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={message} isError={isError} />
       <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
 
       <h2>add a new</h2>

@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
 
-const Result = ({ countryResults }) => {
+const Result = ({ countryResults, setCountryResults }) => {
+
+  const handleShowCountry = name => () => {
+    countriesService.getByName(name)
+      .then(singleCountry => {setCountryResults(singleCountry)})
+  }
+
   if (countryResults === null) return null
-  
+
   if (typeof countryResults === 'string') {
     return <div>{countryResults}</div>
   }
@@ -11,8 +17,11 @@ const Result = ({ countryResults }) => {
   if (Array.isArray(countryResults)) {
     return (
       <div>
-        {countryResults.map(country => 
-          <div key={country}>{country}</div>  
+        {countryResults.map(name => 
+          <div key={name}>
+            {name}
+            <button onClick={handleShowCountry(name)}>show</button>
+          </div>  
         )}
       </div>
     )
@@ -78,7 +87,10 @@ const App = () => {
         <input value={value} onChange={(e) => {setValue(e.target.value)}} />
         <button type='submit'>find</button>
       </form>
-      <Result countryResults={countryResults} />
+      <Result 
+        countryResults={countryResults} 
+        setCountryResults={setCountryResults} 
+      />
     </div>
   )
 }

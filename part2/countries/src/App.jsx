@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
 
-const Result = ({ countryResults, setCountryResults }) => {
-
+const Result = ({ countryResults, setCountryResults, weatherData, setWeatherData }) => {
   const handleShowCountry = name => () => {
     countriesService.getByName(name)
-      .then(singleCountry => {setCountryResults(singleCountry)})
+      .then(singleCountry => {
+        setCountryResults(singleCountry)
+
+        countriesService.getWeather(singleCountry.capital).then(weather => {
+          setWeatherData(weather)
+        })
+      })
   }
 
-  if (countryResults === null) return null
+  if (countryResults === null || weatherData === null) return null
 
   if (typeof countryResults === 'string') {
     return <div>{countryResults}</div>
@@ -40,6 +45,11 @@ const Result = ({ countryResults, setCountryResults }) => {
         ))}
       </ul>
       <img src={countryResults.flags.png} alt={`${countryResults.name.common} flag`} />
+
+      <h2>Weather in {weatherData.location.name}</h2>
+      <div>temperature {weatherData.current.temp_c} Celcius</div>
+      <img src={`https://${weatherData.current.condition.icon.substr(2)}`} alt={`${weatherData.current.condition.text} icon`} />
+      <div>wind {weatherData.current.wind_mph} mph</div>
     </div>
   )
 }
@@ -48,6 +58,7 @@ const App = () => {
   const [value, setValue] = useState('')
   const [searchedCountry, setSearchedCountry] = useState(null)
   const [countryResults, setCountryResults] = useState(null)
+  const [weatherData, setWeatherData] = useState(null)
   
   useEffect(() => {
     if (searchedCountry) {
@@ -67,7 +78,13 @@ const App = () => {
           setCountryResults(filteredCountries)
         } else if (filteredCountries.length === 1) {
           countriesService.getByName(filteredCountries)
-            .then(singleCountry => {setCountryResults(singleCountry)})
+            .then(singleCountry => {
+              setCountryResults(singleCountry)
+
+              countriesService.getWeather(singleCountry.capital).then(weather => {
+                setWeatherData(weather)
+              })
+            })
         } else {
           setCountryResults('not found')
         }
@@ -89,7 +106,9 @@ const App = () => {
       </form>
       <Result 
         countryResults={countryResults} 
-        setCountryResults={setCountryResults} 
+        setCountryResults={setCountryResults}
+        weatherData={weatherData}
+        setWeatherData={setWeatherData}
       />
     </div>
   )

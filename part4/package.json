@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^6.12.2"
+  },
+  "name": "part4",
+  "version": "0.0.1",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.53.0",
+    "nodemon": "^3.0.1"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Inshal Haq",
+  "license": "MIT",
+  "description": ""
+}

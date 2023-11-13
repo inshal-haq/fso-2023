@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Design for Mankind",
+  "author": "Erin Loechner",
+  "url": "https://designformankind.com/",
+  "likes": 132
+}

@@ -117,6 +117,11 @@ const App = () => {
       setMessage(`Added ${returnedPerson.name}`)
       setTimeout(() => {setMessage(null)}, 3000)
     })
+    .catch(error => {
+      setIsError(true)
+      setMessage(error.response.data.error)
+      setTimeout(() => {setMessage(null)}, 3000)
+    })
   }
 
   useEffect(() => {
